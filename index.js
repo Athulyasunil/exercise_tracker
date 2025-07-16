@@ -5,19 +5,17 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-}).then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+}).then(() => console.log("Connected"))
+  .catch((err) => console.error("Error:", err));
 
-// Schemas
+
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true }
 });
@@ -32,12 +30,10 @@ const exerciseSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Exercise = mongoose.model('Exercise', exerciseSchema);
 
-// Routes
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// ✅ 1. Create new user
 app.post('/api/users', async (req, res) => {
   try {
     const { username } = req.body;
@@ -53,7 +49,6 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-// ✅ 2. Get all users
 app.get('/api/users', async (req, res) => {
   try {
     const users = await User.find({}, 'username _id');
@@ -63,7 +58,6 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// ✅ 3. Add exercise
 app.post('/api/users/:_id/exercises', async (req, res) => {
   try {
     const userId = req.params._id;
@@ -95,7 +89,6 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   }
 });
 
-// ✅ 4. Get exercise log
 app.get('/api/users/:_id/logs', async (req, res) => {
   try {
     const userId = req.params._id;
@@ -133,7 +126,6 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   }
 });
 
-// Start server
 const listener = app.listen(process.env.PORT || 3000, () => {
-  console.log('🚀 Server listening on port ' + listener.address().port);
+  console.log(' listening on port ' + listener.address().port);
 });
